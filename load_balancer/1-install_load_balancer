@@ -3,7 +3,6 @@
 
 function instal() {
     command -v "$1" &> /dev/null
-
     if [ $? -ne 0 ]; then
         echo -e "   Installing: $1\n"
 	sudo apt-get update -y -qq && \
@@ -34,8 +33,8 @@ frontend tech_frontend
     default_backend tech_backend
 backend tech_backend
     balance roundrobin
-    server 6783-web-01 44.201.168.13:80 check
-    server 6783-web-02 54.166.105.112:80 check
+    server 6858-web-01 34.207.166.124 check
+    server 6858-web-02 3.88.183.173 check
 "
 
 #shellcheck
