@@ -1,50 +1,17 @@
 #!/usr/bin/env bash
-# install a load balancer
-
-function instal() {
-    command -v "$1" &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo -e "   Installing: $1\n"
-	sudo apt-get update -y -qq && \
-	    sudo apt-get install -y "$1" -qq
-	echo -e "\n"
-    else
-	echo -e "   ${1} is already installed.\n"
-    fi
-}
-
-install haproxy #install haproxy
-
-echo -e "\nSetting up some minor stuff.\n"
-
-# backup default server config file
-sudo cp /etc/haproxy/haproxy.cfg haproxy_default.backup
-
-server_config=\
-"
-defaults
-  mode http
-  timeout client 15s
-  timeout connect 10s
-  timeout server 15s
-  timeout http-request 10s
-frontend tech_frontend
+# Configures a new Ubuntu machine with HAproxy to load balance web-01 and web-02
+sudo apt-get update -y
+sudo apt-get install -y haproxy
+# Add the configuration to the end of the file
+echo "frontend alu-frontend
     bind *:80
-    default_backend tech_backend
-backend tech_backend
+    mode http
+    default_backend alu-backend
+backend alu-backend
     balance roundrobin
-    server 6858-web-01 34.207.166.124 check
-    server 6858-web-02 3.88.183.173 check
-"
-
-#shellcheck
-echo "$server_config" | sudo dd status=none of=/etc/haproxy/haproxy.cfg
-
-#enable haproxy to be started by inin script
-echo "ENABLED=1" | sudo dd status=none of=/etc/default/haproxy
-
-if [ "$(pgrep -c haproxy)" -le 0 ]; then
-    sudo service haproxy start
-else
-    sudo service haproxy restart
-fi
+    server web-01 13.218.66.188:80 check
+    server web-02 3.84.46.16:80 check" | sudo tee -a /etc/haproxy/haproxy.cfg > /dev/null
+# Enable HAproxy to be managed by init script
+sudo sed -i "s/ENABLED=0/ENABLED=1/" /etc/default/haproxy
+# Restart the service
+sudo service haproxy restart
