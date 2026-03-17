@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Configure Nginx with custom header
+# shellcheck disable=SC2154
+
+# Install Nginx
+apt-get update -y
+apt-get install -y nginx
+
+# Create a simple web page (optional but recommended)
+echo "Hello from $(hostname)" > /var/www/html/index.html
+
+# Configure Nginx default server
+cat > /etc/nginx/sites-available/default << 'EOF'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html;
+
+    server_name _;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    add_header X-Served-By $hostname;
+}
+EOF
+
+# Restart Nginx
+service nginx restart
