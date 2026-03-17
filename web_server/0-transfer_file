@@ -1,21 +1,14 @@
 #!/usr/bin/env bash
-#Checking if the number of parameters is less than 4
+# Transfers a file to a remote server using scp
+
 if [ "$#" -lt 4 ]; then
     echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
     exit 1
 fi
 
-# Assign arguments to variables
-PATH_TO_FILE=$1
-IP=$2
-USERNAME=$3
-PATH_TO_SSH_KEY=$4
+FILE="$1"
+IP="$2"
+USER="$3"
+KEY="$4"
 
-# Use scp to transfer the file to the server's home directory (~)
-scp -i "$PATH_TO_SSH_KEY" -o StrictHostKeyChecking=no "$PATH_TO_FILE" "$USERNAME@$IP":~/
-if [ "$?" -eq 0 ]; then
-    echo "File '$PATH_TO_FILE' successfully transferred to $USERNAME@$IP:~/"
-else
-    echo "Error: File transfer failed."
-    exit 1
-fi
+scp -o StrictHostKeyChecking=no -i "$KEY" "$FILE" "$USER@$IP:~/"

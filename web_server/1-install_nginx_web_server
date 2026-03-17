@@ -1,22 +1,14 @@
 #!/usr/bin/env bash
-# script: 1-install_nginx_web_server
+# Install and configure Nginx web server
 
-# start by updating package list and install nginx
+# Update package lists
 apt-get update -y
+
+# Install nginx
 apt-get install -y nginx
 
-# Replcing the default nginx page with the required text
-# Create the custom HTML content
-echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
+# Ensure nginx is running
+service nginx start
 
-# Restart Nginx using the service command (as systemctl is forbidden)
-# This ensures Nginx is started and serves the new file
-/usr/sbin/nginx -t
-/usr/sbin/nginx -s reload
-
-#Check if the process is running
-if ! pgrep -x "nginx" > /dev/null; then
-    /usr/sbin/nginx
-fi
-
-sleep 2
+# Replace default index.html with required content
+echo "Holberton School for the win!" > /var/www/html/index.html
