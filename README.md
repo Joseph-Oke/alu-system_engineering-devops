@@ -1,2 +1,2 @@
 # alu-system_engineering-devops
-non empthhhy
+Contains scripts fpr the alu-system_engineering-devops
